@@ -26,7 +26,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tag="${GITHUB_REF#refs/tags/}"
+          if [ ! -f "release-notes.md" ]; then
+            echo "Changes in this release" > release-notes.md
+          fi
+          
+          tag="${{ github.ref_name }}"
 
           gh release create "$tag" \
             --title="$tag" \
