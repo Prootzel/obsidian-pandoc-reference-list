@@ -1,4 +1,4 @@
-## Obsidian Pandoc Reference List
+## Obsidian Pandoc Reference List mod
 
 Displays a formatted reference in the sidebar for each pandoc citekey present in the current document.
 
