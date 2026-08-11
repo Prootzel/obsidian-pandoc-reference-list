@@ -479,7 +479,7 @@ export class BibManager {
     }
     if (!langCache.get(lang)) {
       throw new Error(
-        'attempting to build citproc engine with empty CSL locale'
+        `attempting to build citproc engine with empty CSL locale (looking for: ${lang})`
       );
     }
     const engine = new CSL.Engine(
@@ -531,7 +531,7 @@ export class BibManager {
     for (const lang of langs) {
       if (!lang) continue;
       if (!this.langCache.has(lang)) {
-        await getCSLLocale(this.langCache, this.plugin.cacheDir, lang);
+        await getCSLLocale(this.langCache, this.plugin.cacheDir, lang, this.plugin.settings.cslLangPath);
       }
     }
   }

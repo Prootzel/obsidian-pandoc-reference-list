@@ -73,11 +73,29 @@ export async function bibToCSL(
 export async function getCSLLocale(
   localeCache: Map<string, string>,
   cacheDir: string,
-  lang: string
+  lang: string,
+  explicitPath? : string
 ) {
+  if (explicitPath) {
+    console.log(`Found local Lang file: ${explicitPath} for: ${lang}`);
+
+    if (!fs.existsSync(explicitPath)) {
+      throw new Error(
+        `Error: retrieving citation locale; Cannot find file '${explicitPath}'.`
+      );
+    }
+
+    const localeData = fs.readFileSync(explicitPath).toString();
+    localeCache.set(explicitPath, localeData);
+    localeCache.set(lang, localeData);
+    return localeData;
+  }
+
   if (localeCache.has(lang)) {
     return localeCache.get(lang);
   }
+
+
 
   const url = `https://raw.githubusercontent.com/citation-style-language/locales/master/locales-${lang}.xml`;
   const outpath = path.join(cacheDir, `locales-${lang}.xml`);

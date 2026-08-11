@@ -39,6 +39,7 @@ export interface ReferenceListSettings {
   cslStyleURL?: string;
   cslStylePath?: string;
   cslLang?: string;
+  cslLangPath?: string;
 
   hideLinks?: boolean;
   showCitekeyTooltips?: boolean;
@@ -268,6 +269,45 @@ export class ReferenceListSettingsTab extends PluginSettingTab {
       </SettingItem>,
       containerEl.createDiv('pwc-setting-item setting-item')
     );
+
+    new Setting(containerEl)
+      .setName(t('Custom citation language'))
+      .setDesc(
+        t(
+          'Path to a language file. This can be an absolute path or one relative to your vault. This will override the style selected above. This can be overridden on a per-file basis by setting "csl" or "citation-style" in the file\'s frontmatter. A URL can be supplied when setting the style via frontmatter.'
+        )
+      )
+      .then((setting) => {
+        let input: TextComponent;
+        setting.addText((text) => {
+          input = text;
+          text.setValue(this.plugin.settings.cslLangPath).onChange((value) => {
+            this.plugin.settings.cslLangPath = value;
+            this.plugin.saveSettings(() =>
+              this.plugin.bibManager.reinit(false)
+            );
+          });
+        });
+
+        setting.addExtraButton((b) => {
+          b.setIcon('folder');
+          b.setTooltip(t('Select a Language file located on your computer'));
+          b.onClick(() => {
+            const path = require('electron').remote.dialog.showOpenDialogSync({
+              properties: ['openFile'],
+            });
+
+            if (path && path.length) {
+              input.setValue(path[0]);
+
+              this.plugin.settings.cslLangPath = path[0];
+              this.plugin.saveSettings(() =>
+                this.plugin.bibManager.reinit(false)
+              );
+            }
+          });
+        });
+      });
 
     new Setting(containerEl)
       .setName(t('Hide links in references'))
