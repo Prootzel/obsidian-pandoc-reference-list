@@ -1,7 +1,9 @@
 name: Release Obsidian plugin
 
 on:
-  push
+  push:
+    tags:
+      - '*'
 
 jobs:
   build:
